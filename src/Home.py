@@ -4,7 +4,7 @@ import streamlit as st
 
 from utils.utils import set_base_layout
 
-set_base_layout(page_title="🏠 Startseite")
+set_base_layout(page_title="🏠 Overview")
 
 col1, col2, col3 = st.columns(3)
 
@@ -41,6 +41,5 @@ def stream_data():
 
 with st.container(border=True):
     with st.chat_message("assistant"):
-        st.markdown("##### LLM-Chatbot: ")
+        st.markdown("##### LLM-Description: ")
         st.write_stream(stream_data())
-        st.chat_input()
