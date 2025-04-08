@@ -1,0 +1,19 @@
+# environement
+.env
+.venv
+.testvenv
+.python-version
+uv-lock
+
+#
+.local/
+
+# chache
+__pycache__/
+.pytest_cache
+.ruff_cache
+
+# testing
+test.py
+test.ipynb
+test.db
