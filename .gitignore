@@ -3,7 +3,7 @@
 .venv
 .testvenv
 .python-version
-uv-lock
+uv.lock
 
 #
 .local/
