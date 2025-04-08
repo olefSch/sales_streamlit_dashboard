@@ -1,8 +1,9 @@
-from src.coming import say_hello
+import subprocess
 
-def main():
-    say_hello()
+
+def run_streamlit_app():
+    subprocess.run(["streamlit", "run", "src/Home.py"])
 
 
 if __name__ == "__main__":
-    main()
+    run_streamlit_app()
