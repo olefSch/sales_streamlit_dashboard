@@ -16,8 +16,9 @@ columns:
     - ghi
     - jkl
   linechart:
-    - mno
-    - pqr
+    - "Order Date"
+    - "Category"
+    - "Sales"
   bentoboxes:
     - stu
     - vwx
