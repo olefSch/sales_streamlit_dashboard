@@ -18,7 +18,7 @@ def set_base_layout(page_title: str):
         st.page_link("pages/1.py", label="📊 Profit Margin Analysis")
         st.page_link("pages/2.py", label="📈 Sales Performance")
         st.page_link("pages/3.py", label="🚢 Shipment Type Segmentation")
-        st.page_link("pages/4.py", label="🌍 Geographic Sales Insights")
+        st.page_link("pages/4.py", label="🇺🇸 Geographic Sales Insights")
 
         st.markdown("---")
 
