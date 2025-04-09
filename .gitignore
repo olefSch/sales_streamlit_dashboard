@@ -5,7 +5,10 @@
 .python-version
 uv.lock
 
-#
+# creds
+.kaggle/
+
+# data
 .local/
 
 # chache

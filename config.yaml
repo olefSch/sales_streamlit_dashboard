@@ -1,0 +1,23 @@
+dataloader:
+  dataset_file: Superstore.csv
+  dataset_name: ishanshrivastava28/superstore-sales
+
+columns:
+  piechart:
+    - "Order Date"
+    - zfg
+  barplot:
+    - "Order Date"
+    - "Category"
+    - "Sub-Category"
+    - "Sales"
+    - "Profit"
+  geomap:
+    - ghi
+    - jkl
+  linechart:
+    - mno
+    - pqr
+  bentoboxes:
+    - stu
+    - vwx
