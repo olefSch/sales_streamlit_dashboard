@@ -1,10 +1,36 @@
+import pandas as pd
 import streamlit as st
 
-from utils.utils import create_profit_margin_df, load_data, set_base_layout
+from config import COLUMNS_BARPLOT
+from loader import DataLoader
+from utils.utils import set_base_layout
 
 set_base_layout(page_title="📊 Profit Margin Analysis")
 
-profit_margin_df = create_profit_margin_df(load_data())
+loader = DataLoader()
+
+
+def load_data(loader: DataLoader) -> pd.DataFrame:
+    """
+    Prepares the DataFrame by converting date columns to datetime format.
+    """
+    df = loader.get_data_for_metric(COLUMNS_BARPLOT)
+
+    df["Order Date"] = pd.to_datetime(df["Order Date"], format="%d-%m-%Y")
+    df["year"] = df["Order Date"].dt.year
+
+    df["profit_margin"] = df["Profit"] / df["Sales"] * 100
+
+    df = pd.DataFrame(
+        df.groupby(["year", "Category", "Sub-Category"])[
+            "profit_margin"
+        ].mean()
+    ).reset_index()
+
+    return df
+
+
+profit_margin_df = load_data(loader)
 
 st.title("Profit Margin by Sub-Category")
 
