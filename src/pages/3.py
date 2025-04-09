@@ -29,45 +29,81 @@ def load_data(loader: DataLoader) -> pd.DataFrame:
     return df
 
 
-shipment_df = load_data(loader)
+try:
+    shipment_df = load_data(loader)
+except Exception as e:
+    st.error(f"An error occurred while loading data: {e}")
+    st.stop()
 
-col1, col2 = st.columns(2)
-
-with col1:
-    selected_years = st.selectbox(
-        "Select Year",
-        sorted(shipment_df["Year"].unique()),
-    )
-
-with col2:
-    selected_categories = st.multiselect(
-        "Select Category(ies)",
-        options=sorted(shipment_df["Category"].unique()),
-        default=sorted(shipment_df["Category"].unique()),
-    )
-
-# Filter the dataframe
-filtered_df = shipment_df[
-    (shipment_df["Year"] == selected_years)
-    & (shipment_df["Category"].isin(selected_categories))
-]
-
-shipment_counts = (
-    filtered_df.groupby("Ship Mode")["Shipment Count"]
-    .sum()
-    .sort_values(ascending=False)
+# Filter dataset for the selected year
+selected_year = st.selectbox(
+    "Select Year",
+    sorted(shipment_df["Year"].unique()),
+    index=len(shipment_df["Year"].unique())
+    - 1,  # Default to the most recent year
 )
 
-# Create the donut chart using Plotly
-fig = go.Figure(
-    data=[
-        go.Pie(
-            labels=shipment_counts.index,
-            values=shipment_counts.values,
-            hole=0.3,
-        )
-    ]
-)
+# Filter data by the selected year
+filtered_df = shipment_df[shipment_df["Year"] == selected_year]
 
-# Display the Plotly chart in Streamlit
-st.plotly_chart(fig)
+# Check if there is data after filtering
+if filtered_df.empty:
+    st.warning(
+        "No data available for the selected filters. Please adjust your selections."
+    )
+    st.stop()
+
+
+# Helper function to create pie chart figures
+def create_pie_chart(data: pd.DataFrame, title: str) -> go.Figure:
+    shipment_counts = (
+        data.groupby("Ship Mode")["Shipment Count"]
+        .sum()
+        .sort_values(ascending=False)
+    )
+    fig = go.Figure(
+        data=[
+            go.Pie(
+                labels=shipment_counts.index,
+                values=shipment_counts.values,
+                hole=0.3,
+            )
+        ]
+    )
+    fig.update_layout(title=title, title_x=0.5)
+    return fig
+
+
+# Create the plot for all shipments (total distribution)
+total_chart = create_pie_chart(filtered_df, "Total Distribution of Ship Modes")
+
+# Create pie charts for each Category
+categories = sorted(filtered_df["Category"].unique())
+figures = []
+for category in categories:
+    category_data = filtered_df[filtered_df["Category"] == category]
+    if not category_data.empty:
+        title = f"Distribution for {category}"
+        figures.append(create_pie_chart(category_data, title))
+
+# Add the total chart to the start of the figures list
+figures.insert(0, total_chart)
+
+# 2x2 Grid Layout
+if len(figures) > 0:
+    # First Row
+    row1 = st.columns(2)
+    row1_figures = figures[:2]  # First two charts
+    for i, fig in enumerate(row1_figures):
+        with row1[i]:
+            st.plotly_chart(fig, use_container_width=True)
+
+    # Second Row
+    if len(figures) > 2:
+        row2 = st.columns(2)
+        row2_figures = figures[2:4]  # Next two charts
+        for i, fig in enumerate(row2_figures):
+            with row2[i]:
+                st.plotly_chart(fig, use_container_width=True)
+else:
+    st.warning("No data available to display charts.")
