@@ -10,7 +10,7 @@ from loader import DataLoader
 from utils.utils import set_base_layout
 
 # Set up the page layout
-set_base_layout(page_title="🌍 Geographic Performance Insights")
+set_base_layout(page_title="🇺🇸 Geographic Performance Insights")
 
 # Initialize the DataLoader
 loader = DataLoader()

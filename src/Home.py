@@ -1,24 +1,79 @@
 import time
 
+import pandas as pd
 import streamlit as st
 
+from config import COLUMNS_BARPLOT
+from loader import DataLoader
 from utils.utils import set_base_layout
 
 set_base_layout(page_title="🏠 Overview")
 
-col1, col2, col3 = st.columns(3)
+loader = DataLoader()
 
-with col1:
-    st.header("KPI 1")
-    st.metric(label="KPI 1", value="100", delta="10", border=True)
 
-with col2:
-    st.header("KPI 2")
-    st.metric(label="KPI 1", value="100", delta="10", border=True)
+def load_data(loader: DataLoader) -> pd.DataFrame:
+    """
+    Prepares the DataFrame by converting date columns to datetime format.
+    """
+    df = loader.get_data_for_metric(COLUMNS_BARPLOT)
 
-with col3:
-    st.header("KPI 3")
-    st.metric(label="KPI 1", value="100", delta="10", border=True)
+    df["Order Date"] = pd.to_datetime(df["Order Date"], format="%d-%m-%Y")
+    df["year"] = df["Order Date"].dt.year
+
+    df["profit_margin"] = df["Profit"] / df["Sales"] * 100
+
+    return df
+
+
+# Load data
+data = load_data(loader)
+
+# Filter data for 2014 and 2013
+data_2014 = data[data["year"] == 2014]
+data_2013 = data[data["year"] == 2013]
+
+# Calculate KPIs for 2014
+sales_2014 = data_2014["Sales"].sum()
+profit_2014 = data_2014["Profit"].sum()
+average_deal_size_2014 = data_2014["Sales"].mean()
+
+# Calculate KPIs for 2013
+sales_2013 = data_2013["Sales"].sum()
+profit_2013 = data_2013["Profit"].sum()
+average_deal_size_2013 = data_2013["Sales"].mean()
+
+# Calculate deltas
+sales_delta = sales_2014 - sales_2013
+profit_delta = profit_2014 - profit_2013
+average_deal_size_delta = average_deal_size_2014 - average_deal_size_2013
+
+# KPI Section
+kpi_col1, kpi_col2, kpi_col3 = st.columns(3)
+
+with kpi_col1:
+    st.metric(
+        label="Total Sales (2014)",
+        value=f"{sales_2014:,.2f}$",
+        delta=f"{sales_delta:,.2f}$ (Prior Year)",
+        border=True,
+    )
+
+with kpi_col2:
+    st.metric(
+        label="Total Profit (2014)",
+        value=f"{profit_2014:,.2f}$",
+        delta=f"{profit_delta:,.2f}$ (Prior Year)",
+        border=True,
+    )
+
+with kpi_col3:
+    st.metric(
+        label="Average Deal Size (2014)",
+        value=f"{average_deal_size_2014:,.2f}$",
+        delta=f"{average_deal_size_delta:,.2f}$ (Prior Year)",
+        border=True,
+    )
 
 _DUMMY_TEXT = """
 ✅ 1. Umsatzentwicklung
