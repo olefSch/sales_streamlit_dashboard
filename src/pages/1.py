@@ -130,5 +130,5 @@ fig.update_layout(
     width=800,  # Adjust chart width
 )
 
-# Display the chart
-st.plotly_chart(fig, use_container_width=True)
+with st.container(border=True):
+    st.plotly_chart(fig, use_container_width=True)
