@@ -16,8 +16,14 @@ columns:
     - "Sales"
     - "Profit"
   geomap:
-    - ghi
-    - jkl
+    - "Order Date"
+    - "Country"
+    - "State"
+    - "Postal Code"
+    - "Category"
+    - "Sub-Category"
+    - "Sales"
+    - "Profit"
   linechart:
     - "Order Date"
     - "Category"
