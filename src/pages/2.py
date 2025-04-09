@@ -24,8 +24,6 @@ def load_data(loader: DataLoader) -> Tuple[pd.DataFrame, List[str]]:
 
 df, unique_categories = load_data(DataLoader())
 
-st.title("Sales Performance Over Time")
-
 # 🚀 Filters
 col1, col2, col3 = st.columns([1, 1, 2])
 
