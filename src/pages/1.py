@@ -63,36 +63,22 @@ grouped = (
     .reset_index()
 )
 
-# Calculate the maximum profit margin for each Category
-category_max_profit = (
-    grouped.groupby("Category")["profit_margin"].max().reset_index()
-)
+# 🔧 Define custom colors for categories
+custom_colors = {
+    "Office Supplies": "#0068c9",  # Dark blue
+    "Technology": "#83c9ff",  # Light blue
+    "Furniture": "#ff2a2b",  # Red
+}
 
-# Sort Categories by their maximum profit margin in descending order
-category_order = category_max_profit.sort_values(
-    by="profit_margin", ascending=False
-)["Category"].tolist()
+# 🔧 Define a custom sorting order for both legend and plot
+category_order = ["Office Supplies", "Technology", "Furniture"]
 
-# Sort Sub-Categories within each Category by their profit margin in descending order
-sub_category_order = (
-    grouped.groupby(["Category", "Sub-Category"])
-    .mean()
-    .reset_index()
-    .sort_values(by=["Category", "profit_margin"], ascending=[False, False])[
-        "Sub-Category"
-    ]
-    .tolist()
-)
-
-# Apply the sorted order to the grouped DataFrame
+# 🔧 Ensure the order of Categories in the dataframe matches the custom order
 grouped["Category"] = pd.Categorical(
     grouped["Category"], categories=category_order, ordered=True
 )
-grouped["Sub-Category"] = pd.Categorical(
-    grouped["Sub-Category"], categories=sub_category_order, ordered=True
-)
 
-# Sort grouped data by Category and Sub-Category
+# Sort grouped data by the custom Category order and Sub-Category
 grouped = grouped.sort_values(by=["Category", "Sub-Category"])
 
 # Create a Plotly bar chart with Categories mapped to colors
@@ -109,10 +95,10 @@ fig = px.bar(
         "Category": "Category",
     },
     text="profit_margin",  # Add profit margin values as text
+    color_discrete_map=custom_colors,  # Apply custom colors
     category_orders={
-        "Category": category_order,
-        "Sub-Category": sub_category_order,
-    },
+        "Category": category_order
+    },  # Enforce the custom Category order
 )
 
 # Customize the text display
@@ -128,6 +114,7 @@ fig.update_layout(
     legend_title="Category",  # Add a legend title for clarity
     height=600,  # Adjust chart height
     width=800,  # Adjust chart width
+    legend=dict(traceorder="normal"),  # Enforce the legend order
 )
 
 with st.container(border=True):
