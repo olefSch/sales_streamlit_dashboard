@@ -4,8 +4,11 @@ dataloader:
 
 columns:
   piechart:
-    - "Order Date"
-    - zfg
+    - "Ship Date"
+    - "Ship Mode"
+    - "Category"
+    - "Sub-Category"
+    - "Sales"
   barplot:
     - "Order Date"
     - "Category"

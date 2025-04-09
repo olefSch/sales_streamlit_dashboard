@@ -2,39 +2,58 @@ import pandas as pd
 import plotly.graph_objects as go
 import streamlit as st
 
+from config import COLUMNS_PIECHART
+from loader import DataLoader
 from utils.utils import set_base_layout
 
 set_base_layout(page_title="🚢 Shipment Type Segmentation")
 
-st.write("Hi")
+loader = DataLoader()
 
-df = pd.DataFrame()
 
-# Get unique years and categories for the filters
-unique_years = sorted(df["year"].unique())
-unique_categories = df["Category"].unique()
+def load_data(loader: DataLoader) -> pd.DataFrame:
+    """
+    Prepares the DataFrame by converting date columns to datetime format.
+    """
+    df = loader.get_data_for_metric(COLUMNS_PIECHART)
 
-# Create sidebar filters
-st.sidebar.header("Filter Data")
-selected_year = st.sidebar.selectbox(
-    "Select Year", ["All"] + list(unique_years)
-)
-selected_category = st.sidebar.selectbox(
-    "Select Category", ["All"] + list(unique_categories)
-)
+    df["Ship Date"] = pd.to_datetime(df["Ship Date"], format="%d-%m-%Y")
+    df["Year"] = df["Ship Date"].dt.year
 
-# Filter the DataFrame based on user selections
-filtered_df = df.copy()
+    df = (
+        df.groupby(["Year", "Category", "Sub-Category", "Ship Mode"])
+        .size()
+        .reset_index(name="Shipment Count")
+    )
 
-if selected_year != "All":
-    filtered_df = filtered_df[filtered_df["year"] == selected_year]
+    return df
 
-if selected_category != "All":
-    filtered_df = filtered_df[filtered_df["Category"] == selected_category]
 
-# Group by Ship Mode and sum Sales for the donut chart
-sales_by_ship_mode = (
-    filtered_df.groupby("Ship Mode")["Sales"]
+shipment_df = load_data(loader)
+
+col1, col2 = st.columns(2)
+
+with col1:
+    selected_years = st.selectbox(
+        "Select Year",
+        sorted(shipment_df["Year"].unique()),
+    )
+
+with col2:
+    selected_categories = st.multiselect(
+        "Select Category(ies)",
+        options=sorted(shipment_df["Category"].unique()),
+        default=sorted(shipment_df["Category"].unique()),
+    )
+
+# Filter the dataframe
+filtered_df = shipment_df[
+    (shipment_df["Year"] == selected_years)
+    & (shipment_df["Category"].isin(selected_categories))
+]
+
+shipment_counts = (
+    filtered_df.groupby("Ship Mode")["Shipment Count"]
     .sum()
     .sort_values(ascending=False)
 )
@@ -43,15 +62,11 @@ sales_by_ship_mode = (
 fig = go.Figure(
     data=[
         go.Pie(
-            labels=sales_by_ship_mode.index,
-            values=sales_by_ship_mode.values,
+            labels=shipment_counts.index,
+            values=shipment_counts.values,
             hole=0.3,
         )
     ]
-)  # Adjust 'hole' for donut size
-
-fig.update_layout(
-    title_text=f"Sales Distribution by Shipment Type (Year: {selected_year}, Category: {selected_category})"
 )
 
 # Display the Plotly chart in Streamlit
