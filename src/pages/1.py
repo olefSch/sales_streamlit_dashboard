@@ -1,5 +1,5 @@
 import pandas as pd
-import plotly.express as px
+import plotly.graph_objects as go
 import streamlit as st
 
 from config import COLUMNS_BARPLOT
@@ -70,51 +70,54 @@ custom_colors = {
     "Furniture": "#ff2a2b",  # Red
 }
 
-# 🔧 Define a custom sorting order for both legend and plot
-category_order = ["Office Supplies", "Technology", "Furniture"]
+# 🔧 Define a custom sorting order for display in the plot (top to bottom)
+category_order_plot = ["Furniture", "Technology", "Office Supplies"]
 
-# 🔧 Ensure the order of Categories in the dataframe matches the custom order
-grouped["Category"] = pd.Categorical(
-    grouped["Category"], categories=category_order, ordered=True
-)
+# 🔧 Define a custom sorting order for legend (reversed from plot order)
+category_order_legend = ["Office Supplies", "Technology", "Furniture"]
 
-# Sort grouped data by the custom Category order and Sub-Category
-grouped = grouped.sort_values(by=["Category", "Sub-Category"])
+# Sort by profit_margin within each category (descending)
+grouped_sorted = pd.DataFrame()
+for category in category_order_plot:
+    if category in grouped["Category"].values:
+        category_data = grouped[grouped["Category"] == category].sort_values(
+            by="profit_margin", ascending=True
+        )
+        grouped_sorted = pd.concat([grouped_sorted, category_data])
 
-# Create a Plotly bar chart with Categories mapped to colors
-fig = px.bar(
-    grouped,
-    x="profit_margin",
-    y="Sub-Category",
-    orientation="h",  # Horizontal bars
-    color="Category",  # Map Categories to different colors
-    title="Profit Margin by Sub-Category and Category",
-    labels={
-        "profit_margin": "Profit Margin (%)",
-        "Sub-Category": "Sub-Category",
-        "Category": "Category",
-    },
-    text="profit_margin",  # Add profit margin values as text
-    color_discrete_map=custom_colors,  # Apply custom colors
-    category_orders={
-        "Category": category_order
-    },  # Enforce the custom Category order
-)
+# Create an empty figure
+fig = go.Figure()
 
-# Customize the text display
-fig.update_traces(
-    texttemplate="%{text:.2f}%",  # Format text as a percentage with 2 decimals
-    textposition="inside",  # Position the text inside the bars
-)
+# Manually add traces in reverse order for correct legend display
+for category in category_order_legend:
+    if category in grouped_sorted["Category"].values:
+        cat_data = grouped_sorted[grouped_sorted["Category"] == category]
+        fig.add_trace(
+            go.Bar(
+                x=cat_data["profit_margin"],
+                y=cat_data["Sub-Category"],
+                name=category,
+                orientation="h",
+                marker_color=custom_colors[category],
+                text=cat_data["profit_margin"],
+                texttemplate="%{text:.2f}%",
+                textposition="inside",
+            )
+        )
 
 # Customize the layout
 fig.update_layout(
+    title="Profit Margin by Sub-Category and Category",
     xaxis_title="Profit Margin (%)",
     yaxis_title="Sub-Category",
-    legend_title="Category",  # Add a legend title for clarity
-    height=600,  # Adjust chart height
-    width=800,  # Adjust chart width
-    legend=dict(traceorder="normal"),  # Enforce the legend order
+    legend_title="Category",
+    height=600,
+    width=800,
+    showlegend=True,
+    legend=dict(
+        traceorder="reversed"  # This ensures the legend appears in the order traces were added
+    ),
+    barmode="stack",  # This doesn't affect our horizontal bars but ensures correct legend behavior
 )
 
 with st.container(border=True):

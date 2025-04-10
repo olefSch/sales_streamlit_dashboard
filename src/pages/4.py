@@ -153,8 +153,13 @@ fig = px.choropleth(
 )
 
 # Update geo settings for better visualization
-fig.update_geos(fitbounds="locations", visible=False)
-fig.update_layout(margin={"r": 0, "t": 30, "l": 0, "b": 0})
+fig.update_geos(
+    fitbounds="locations",
+    visible=True,
+    projection_type="albers usa",
+)
+fig.update_layout(autosize=True, height=600)
 
+# Display the map
 with st.container(border=True):
     st.plotly_chart(fig)

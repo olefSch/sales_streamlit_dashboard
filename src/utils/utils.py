@@ -29,11 +29,9 @@ def set_base_layout(page_title: str):
         )
         st.markdown(
             """
-            The goal of this project was to develop a dynamic Streamlit dashboard using a publicly available sales dataset from Kaggle. 
-            The objective was to extract meaningful insights that can be directly applied to improve sales management strategies.
+            The dataset, Superstore Sales, contains detailed transactional data from a fictional retail store, including customer information, product categories, sales, profits, and shipping details. The objective was to extract meaningful insights that can be directly applied to improve sales management and strategic decision-making.
             """
         )
-        st.markdown("---")
 
         st.caption(
             """
