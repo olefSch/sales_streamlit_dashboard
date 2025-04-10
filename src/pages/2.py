@@ -64,7 +64,7 @@ if selected_categories:
     ]
 
 # 🔁 Map granularity to pandas frequency
-freq_map = {"Daily": "D", "Weekly": "W", "Monthly": "M"}
+freq_map = {"Daily": "D", "Weekly": "W", "Monthly": "ME"}
 
 # 🧮 Group by selected frequency and category
 sales_over_time = (
