@@ -76,14 +76,19 @@ with kpi_col3:
     )
 
 _DUMMY_TEXT = """
-✅ 1. Umsatzentwicklung
-Der monatliche Umsatz verzeichnete im aktuellen Berichtszeitraum einen Anstieg von 12,4 % im Vergleich zum Vormonat. Besonders stark war die Nachfrage im Bereich digitale Dienstleistungen. Prognosen deuten auf eine stabile Fortsetzung des Wachstumstrends hin.
+📈 1. Umsatz- und Gewinnentwicklung  
+Im Jahr 2014 wurde ein Gesamtumsatz von **733.947,02 \\$** erzielt – ein Plus von **125.473,19 \\$** im Vergleich zum Vorjahr.  
+Auch der Gewinn konnte gesteigert werden und lag bei **93.507,51 \\$**, was einer Verbesserung um **11.780,58 \\$** entspricht.  
+Diese positive Entwicklung spiegelt die solide Performance des Unternehmens wider.
 
-📦 2. Auftragsstatus & Lieferperformance
-Die durchschnittliche Lieferzeit konnte auf 2,3 Werktage reduziert werden. Aktuell befinden sich 86 % der Bestellungen im Status „ausgeliefert“, während 8 % in Bearbeitung sind. Die Pünktlichkeitsquote liegt bei 94,1 %.
+💰 2. Durchschnittlicher Auftragswert  
+Der durchschnittliche Auftragswert betrug im Jahr 2014 **221,13 \\$**.  
+Im Vergleich zum Vorjahr bedeutet dies jedoch einen leichten Rückgang von **14,71 \\$**.  
+Dies könnte auf kleinere Einzelbestellungen oder veränderte Kaufgewohnheiten hinweisen.
 
-👥 3. Kundenzufriedenheit (NPS)
-Der Net Promoter Score (NPS) liegt aktuell bei +62, was auf eine hohe Kundenzufriedenheit hinweist. Die Hauptgründe für positive Bewertungen sind Zuverlässigkeit, schneller Support und produktbezogene Innovation.
+📊 3. Wirtschaftliche Gesamtbewertung  
+Trotz des Rückgangs beim durchschnittlichen Auftragswert zeigen die Umsatzzahlen und der gestiegene Gewinn eine robuste Geschäftsentwicklung.  
+Die Zahlen legen nahe, dass eine höhere Verkaufsmenge oder effizientere Prozesse zum Erfolg beigetragen haben.
 """
 
 
