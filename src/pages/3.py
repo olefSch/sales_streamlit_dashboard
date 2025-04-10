@@ -6,6 +6,7 @@ from config import COLUMNS_PIECHART
 from loader import DataLoader
 from utils.utils import set_base_layout
 
+# Set the base layout for the app
 set_base_layout(page_title="🚢 Shipment Type Segmentation")
 
 loader = DataLoader()
@@ -17,9 +18,11 @@ def load_data(loader: DataLoader) -> pd.DataFrame:
     """
     df = loader.get_data_for_metric(COLUMNS_PIECHART)
 
+    # Convert ship date to datetime and extract year
     df["Ship Date"] = pd.to_datetime(df["Ship Date"], format="%d-%m-%Y")
     df["Year"] = df["Ship Date"].dt.year
 
+    # Group the data by relevant columns and count shipments
     df = (
         df.groupby(["Year", "Category", "Sub-Category", "Ship Mode"])
         .size()
@@ -29,27 +32,43 @@ def load_data(loader: DataLoader) -> pd.DataFrame:
     return df
 
 
+# Load data and handle errors
 try:
     shipment_df = load_data(loader)
 except Exception as e:
     st.error(f"An error occurred while loading data: {e}")
     st.stop()
 
-# Filter dataset for the selected year
-selected_year = st.selectbox(
-    "Select Year",
-    sorted(shipment_df["Year"].unique()),
-    index=len(shipment_df["Year"].unique())
-    - 1,  # Default to the most recent year
-)
+# 🚀 Filters
+col1, col2 = st.columns([1, 2])
 
-# Filter data by the selected year
-filtered_df = shipment_df[shipment_df["Year"] == selected_year]
+# Year selection filter
+with col1:
+    selected_year = st.selectbox(
+        "Select Year",
+        sorted(shipment_df["Year"].unique()),  # List of unique years
+        index=len(shipment_df["Year"].unique())
+        - 1,  # Default to the latest year
+    )
+
+# Category selection filter
+with col2:
+    selected_category = st.selectbox(
+        "Select Category",
+        sorted(shipment_df["Category"].unique()),  # List of unique categories
+        index=0,  # Default to the first category
+    )
+
+# Filter data by the selected year and category
+filtered_df = shipment_df[
+    (shipment_df["Year"] == selected_year)
+    & (shipment_df["Category"] == selected_category)
+]
 
 # Check if there is data after filtering
 if filtered_df.empty:
     st.warning(
-        "No data available for the selected filters. Please adjust your selections."
+        "No data available for the selected year and category. Please adjust your selections."
     )
     st.stop()
 
@@ -74,36 +93,23 @@ def create_pie_chart(data: pd.DataFrame, title: str) -> go.Figure:
     return fig
 
 
-# Create the plot for all shipments (total distribution)
-total_chart = create_pie_chart(filtered_df, "Total Distribution of Ship Modes")
+# Create the plot for all shipments (total distribution across the selected year)
+total_distribution_df = shipment_df[shipment_df["Year"] == selected_year]
+total_chart = create_pie_chart(
+    total_distribution_df,
+    f"Total Distribution of Ship Modes ({selected_year})",
+)
 
-# Create pie charts for each Category
-categories = sorted(filtered_df["Category"].unique())
-figures = []
-for category in categories:
-    category_data = filtered_df[filtered_df["Category"] == category]
-    if not category_data.empty:
-        title = f"Distribution for {category}"
-        figures.append(create_pie_chart(category_data, title))
+# Create the plot for the selected category
+category_chart = create_pie_chart(
+    filtered_df, f"Distribution for {selected_category}"
+)
 
-# Add the total chart to the start of the figures list
-figures.insert(0, total_chart)
+# 📊 Layout: Display both pie charts in a single row
+row = st.columns(2, border=True)
 
-# 2x2 Grid Layout
-if len(figures) > 0:
-    # First Row
-    row1 = st.columns(2)
-    row1_figures = figures[:2]  # First two charts
-    for i, fig in enumerate(row1_figures):
-        with row1[i]:
-            st.plotly_chart(fig, use_container_width=True)
+with row[0]:
+    st.plotly_chart(total_chart, use_container_width=True)
 
-    # Second Row
-    if len(figures) > 2:
-        row2 = st.columns(2)
-        row2_figures = figures[2:4]  # Next two charts
-        for i, fig in enumerate(row2_figures):
-            with row2[i]:
-                st.plotly_chart(fig, use_container_width=True)
-else:
-    st.warning("No data available to display charts.")
+with row[1]:
+    st.plotly_chart(category_chart, use_container_width=True)

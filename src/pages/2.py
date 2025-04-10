@@ -24,8 +24,6 @@ def load_data(loader: DataLoader) -> Tuple[pd.DataFrame, List[str]]:
 
 df, unique_categories = load_data(DataLoader())
 
-st.title("Sales Performance Over Time")
-
 # 🚀 Filters
 col1, col2, col3 = st.columns([1, 1, 2])
 
@@ -33,6 +31,8 @@ with col1:
     date_range = st.date_input(
         "Select Date Range",
         value=(df["Order Date"].min().date(), df["Order Date"].max().date()),
+        min_value=df["Order Date"].min().date(),  # Lock the minimum date
+        max_value=df["Order Date"].max().date(),  # Lock the maximum date
     )
 
 with col2:
@@ -76,6 +76,16 @@ sales_over_time = (
     .sort_values("Order Date")
 )
 
+# 🔧 Define custom colors for categories
+custom_colors = {
+    "Office Supplies": "#0068c9",  # Dark blue
+    "Technology": "#83c9ff",  # Light blue
+    "Furniture": "#ff2a2b",  # Red
+}
+
+# 🔧 Define a custom legend order
+category_order = ["Office Supplies", "Technology", "Furniture"]
+
 # 📈 Plotly line chart
 fig = px.line(
     sales_over_time,
@@ -86,9 +96,20 @@ fig = px.line(
     template="plotly_white",
     title=f"Sales Over Time ({granularity})",
     labels={"Sales": "Total Sales", "Order Date": "Date"},
+    color_discrete_map=custom_colors,  # Apply custom colors
+    category_orders={
+        "Category": category_order
+    },  # Enforce custom legend order
 )
 
-fig.update_layout(xaxis_title="Date", yaxis_title="Sales")
+# Customize layout
+fig.update_layout(
+    xaxis_title="Date",
+    yaxis_title="Sales",
+    title_x=0.5,
+    font=dict(family="Arial", size=12, color=st.get_option("theme.textColor")),
+)
 
-# Display chart
-st.plotly_chart(fig, use_container_width=True)
+# 📊 Display the chart
+with st.container(border=True):
+    st.plotly_chart(fig, use_container_width=True)

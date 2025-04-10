@@ -109,6 +109,36 @@ with urlopen(
 ) as response:
     us_states = json.load(response)
 
+# 🔧 Define custom color palette
+custom_colors = {
+    "low": "#0068c9",  # Dark blue
+    "medium": "#83c9ff",  # Light blue
+    "high": "#ff2a2b",  # Red
+}
+
+
+# Map values to custom colors
+def get_custom_color(value, thresholds):
+    """
+    Returns a custom color based on the value and defined thresholds.
+    """
+    if value <= thresholds[0]:  # Low range
+        return custom_colors["low"]
+    elif value <= thresholds[1]:  # Medium range
+        return custom_colors["medium"]
+    else:  # High range
+        return custom_colors["high"]
+
+
+# Calculate thresholds for color mapping
+data_values = performance_by_state[f"Total {performance_metric}"]
+thresholds = [data_values.quantile(0.33), data_values.quantile(0.66)]
+
+# Add a custom color column to the dataframe
+performance_by_state["Custom Color"] = performance_by_state[
+    f"Total {performance_metric}"
+].apply(lambda x: get_custom_color(x, thresholds))
+
 # Create choropleth map
 fig = px.choropleth(
     performance_by_state,
@@ -116,13 +146,20 @@ fig = px.choropleth(
     locations="State",
     featureidkey="properties.name",
     color=f"Total {performance_metric}",
-    color_continuous_scale="viridis",
+    color_discrete_sequence=performance_by_state["Custom Color"],
     scope="usa",
     labels={f"Total {performance_metric}": color_label},
     title=f"{map_title_prefix} by State",
 )
-fig.update_geos(fitbounds="locations", visible=False)
-fig.update_layout(margin={"r": 0, "t": 30, "l": 0, "b": 0})
 
-# Display the map in Streamlit
-st.plotly_chart(fig)
+# Update geo settings for better visualization
+fig.update_geos(
+    fitbounds="locations",
+    visible=True,
+    projection_type="albers usa",
+)
+fig.update_layout(autosize=True, height=600)
+
+# Display the map
+with st.container(border=True):
+    st.plotly_chart(fig)
