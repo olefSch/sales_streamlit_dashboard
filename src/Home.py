@@ -96,5 +96,5 @@ def stream_data():
 
 with st.container(border=True):
     with st.chat_message("assistant"):
-        st.markdown("##### LLM-Description: ")
+        st.markdown("##### Description: ")
         st.write_stream(stream_data())
