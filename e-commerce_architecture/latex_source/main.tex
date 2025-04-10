@@ -1,0 +1,78 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{times}
+\usepackage[a4paper, left=4cm, right=3cm, top=3cm, bottom=2cm]{geometry}
+\usepackage{array}
+
+\usepackage{setspace}
+\setlength{\parskip}{6pt}    
+\setlength{\parindent}{0pt}   
+
+\usepackage[printonlyused]{acronym}  
+
+\usepackage[labelfont=bf, textfont=it, labelsep=newline, justification=raggedright, singlelinecheck=false]{caption}
+
+\usepackage[
+backend=biber,
+style=apa,
+hyperref=false,
+]{biblatex}
+\addbibresource{references.bib}
+
+% \usepackage[natbibapa]{apacite}
+\usepackage{pdfpages}
+\usepackage{tikz}
+
+\usepackage{booktabs}
+
+\usepackage{amsmath}    % For advanced math typesetting
+\usepackage{amssymb}    % For additional math symbols
+\usepackage{amsfonts}   % For additional math fonts
+
+\usepackage{listings}
+\usepackage{xcolor}
+
+\lstset{ 
+    language=Python,                % Language for syntax highlighting
+    basicstyle=\ttfamily\footnotesize, % Code font style and size
+    keywordstyle=\color{blue},       % Color for keywords
+    stringstyle=\color{red},         % Color for strings
+    commentstyle=\color{green},       % Color for comments
+    caption=The log's JSON format,  % Caption for the code block
+    captionpos=t,                    % Position of the caption: b for bottom, t for top
+}
+\usepackage{graphicx}
+
+\begin{document}
+\pagenumbering{Roman}
+
+\include{titlepage}
+
+\onehalfspacing
+
+\setcounter{page}{2}
+
+
+\newpage
+
+\tableofcontents
+\newpage
+
+% ------- CONTENT -------
+\pagenumbering{arabic}
+\setcounter{page}{1}
+
+\include{content}
+
+\newpage
+
+% ------- Referecnes + Rest -------
+\pagenumbering{Roman}
+\setcounter{page}{3}
+
+% \bibliographystyle{apacite}
+% \bibliography{references.bib}
+\printbibliography
+
+\end{document}
