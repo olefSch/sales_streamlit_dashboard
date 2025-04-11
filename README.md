@@ -6,7 +6,7 @@ This repository contains the documentation and design of an IT architecture for 
 
 ### 1. Context and Development 🛠️
 
-This project was developed during a **2.5-day hackathon** as part of the **DS Data Management Fundamentals** course at the **Duale Hochschule Baden-Württemberg (DHBW)**. The course is taught by _Prof. Dr. Giacomo Welsch_. The project was created by _Philipp Meyer & Ole Schildt_.
+This project was developed during a **2-day hackathon** as part of the **DS Data Management Fundamentals** course at the **Duale Hochschule Baden-Württemberg (DHBW)**. The course is taught by _Prof. Dr. Giacomo Welsch_. The project was created by _Philipp Meyer & Ole Schildt_.
 
 The hackathon focused on designing a conceptual IT architecture for a data-driven company while implementing an interactive data visualization dashboard. The work was divided into two main tasks:
 
